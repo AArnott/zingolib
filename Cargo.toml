@@ -28,6 +28,7 @@ build_utils = { path = "./build_utils" }
 debug = false
 
 [patch.crates-io]
+ring = { git = "https://github.com/awakecoding/ring", branch = "0.16.20_alpha" }
 incrementalmerkletree = { git = "https://github.com/zcash/incrementalmerkletree", rev = "bae25ad89c0c192bee625252d2d419bd56638e48" }
 shardtree = { git = "https://github.com/zcash/incrementalmerkletree", rev = "bae25ad89c0c192bee625252d2d419bd56638e48" }
 
