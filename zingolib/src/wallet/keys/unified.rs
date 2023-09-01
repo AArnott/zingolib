@@ -12,6 +12,7 @@ use orchard::keys::Scope;
 
 use zcash_address::unified::{Container, Encoding, Fvk, Ufvk};
 use zcash_client_backend::address::UnifiedAddress;
+use zcash_client_backend::keys::{Era, UnifiedSpendingKey};
 use zcash_encoding::Vector;
 use zcash_primitives::{
     legacy::TransparentAddress, sapling::note_encryption::PreparedIncomingViewingKey,
@@ -350,6 +351,19 @@ impl WalletCapability {
         // we need to get the 64 byte bip39 entropy
         let bip39_seed = seed_phrase.to_seed("");
         Ok(Self::new_from_seed(config, &bip39_seed, position))
+    }
+
+    /// Creates a new `WalletCapability` from a unified spending key.
+    pub fn new_from_usk(usk: &[u8]) -> Result<Self, String> {
+        // Decode unified spending key
+        let usk = UnifiedSpendingKey::from_bytes(Era::Orchard, usk)
+            .map_err(|_| "Error decoding unified spending key.")?;
+        Ok(Self {
+            orchard: Capability::Spend(usk.orchard().to_owned()),
+            sapling: Capability::Spend(usk.sapling().to_owned()),
+            // transparent: Capability::Spend(usk.transparent()),
+            ..Default::default()
+        })
     }
 
     pub fn new_from_ufvk(config: &ZingoConfig, ufvk_encoded: String) -> Result<Self, String> {
